@@ -1,4 +1,9 @@
 package com.hv.meeting_scheduler_api_java.repository;
 
-public interface ScheduleEntyRepository {
+import com.hv.meeting_scheduler_api_java.domain.ScheduleEntry;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.UUID;
+
+public interface ScheduleEntryRepository extends JpaRepository<ScheduleEntry, UUID> {
 }
