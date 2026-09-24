@@ -71,10 +71,14 @@ public class Schedule {
         this.updatedAt = updatedAt;
     }
 
-    public Schedule(User user, String name, String timezone, Instant updatedAt) {
+    public Schedule(User user, String name, String timezone) {
         this.user = user;
         this.name = name;
         this.timezone = timezone;
-        this.updatedAt = updatedAt;
+        Instant now = Instant.now();
+        this.createdAt = now;
+        this.updatedAt = now;
     }
+
+
 }
