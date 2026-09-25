@@ -6,7 +6,6 @@ import com.hv.meeting_scheduler_api_java.dto.ScheduleResponse;
 import com.hv.meeting_scheduler_api_java.service.ScheduleService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -49,5 +48,13 @@ public class ScheduleController {
         return ResponseEntity.noContent().build();
    }
 
+   @PutMapping("/{id}")
+    public ScheduleResponse update(
+            @AuthenticationPrincipal UUID userId,
+            @PathVariable UUID id,
+            @Valid @RequestBody CreateScheduleRequest request
+   ) {
+        return scheduleService.update(userId, id, request);
+   }
 
 }

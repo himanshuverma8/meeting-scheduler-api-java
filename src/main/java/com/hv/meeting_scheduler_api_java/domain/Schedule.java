@@ -80,5 +80,10 @@ public class Schedule {
         this.updatedAt = now;
     }
 
+    public void update(String name, String timezone) {
+        this.name = name;
+        this.timezone = timezone;
+        this.updatedAt = Instant.now();
+    }
 
 }
