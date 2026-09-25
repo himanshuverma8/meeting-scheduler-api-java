@@ -9,7 +9,7 @@ import java.util.UUID;
 public record CreateEventTypeRequest(
         @NotNull UUID scheduleId,
         @NotBlank String name,
-        @PositiveOrZero Integer duration,
+        @NotNull @PositiveOrZero Integer duration,
         @NotNull @PositiveOrZero Integer bufferBefore,
         @NotNull @PositiveOrZero Integer bufferAfter,
         @NotNull @PositiveOrZero Integer minNoticeMinutes,

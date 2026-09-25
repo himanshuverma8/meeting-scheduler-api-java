@@ -126,7 +126,7 @@ public class EventType {
         this.updatedAt = updatedAt;
     }
 
-    public EventType(User user, Schedule schedule, String name, Integer duration, Integer bufferBefore, Integer bufferAfter, Integer minNoticeMinutes, Integer maxDaysInAdvance, Instant updatedAt) {
+    public EventType(User user, Schedule schedule, String name, Integer duration, Integer bufferBefore, Integer bufferAfter, Integer minNoticeMinutes, Integer maxDaysInAdvance) {
         this.user = user;
         this.schedule = schedule;
         this.name = name;
@@ -135,6 +135,8 @@ public class EventType {
         this.bufferAfter = bufferAfter;
         this.minNoticeMinutes = minNoticeMinutes;
         this.maxDaysInAdvance = maxDaysInAdvance;
-        this.updatedAt = updatedAt;
+        Instant now = Instant.now();
+        this.createdAt = now;
+        this.updatedAt = now;
     }
 }

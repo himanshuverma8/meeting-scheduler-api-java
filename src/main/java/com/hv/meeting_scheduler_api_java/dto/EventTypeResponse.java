@@ -13,5 +13,5 @@ public record EventTypeResponse(
         Integer minNoticeMinutes,
         Integer maxDaysInAdvance,
         Instant createdAt,
-        Instant uoadtedAt
+        Instant updatedAt
 ) {}
