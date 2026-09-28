@@ -1,6 +1,5 @@
 package com.hv.meeting_scheduler_api_java.controller;
 
-import com.hv.meeting_scheduler_api_java.domain.Schedule;
 import com.hv.meeting_scheduler_api_java.dto.CreateScheduleRequest;
 import com.hv.meeting_scheduler_api_java.dto.ScheduleResponse;
 import com.hv.meeting_scheduler_api_java.service.ScheduleService;
