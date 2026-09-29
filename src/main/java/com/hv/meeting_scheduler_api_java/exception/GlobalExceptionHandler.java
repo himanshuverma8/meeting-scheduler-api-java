@@ -34,4 +34,10 @@ public class GlobalExceptionHandler {
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
     }
+
+    @ExceptionHandler(SlotAlreadyBookedException.class)
+    public ResponseEntity<Map<String,String>> handleSlotConflict(SlotAlreadyBookedException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(Map.of("error", ex.getMessage()));
+    }
 }
