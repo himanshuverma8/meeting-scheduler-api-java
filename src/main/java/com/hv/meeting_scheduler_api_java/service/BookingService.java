@@ -19,7 +19,7 @@ import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoUnit;
-import java.util.UUID;
+import java.util.Optional;
 
 @Service
 public class BookingService {
@@ -35,7 +35,16 @@ public class BookingService {
     }
 
     @Transactional
-    public BookingResponse createBooking(CreateBookingRequest request) {
+    public BookingResponse createBooking(CreateBookingRequest request, String idempotencyKey) {
+        String key = normalize(idempotencyKey);
+
+        if (key != null) {
+            Optional<Booking> existing = bookingRepository.findByIdempotencyKey(key);
+            if (existing.isPresent()) {
+                return toResponse(existing.get());
+            }
+        }
+
         EventType eventType = eventTypeRepository.findById(request.eventTypeId())
                 .orElseThrow(() -> new ResourceNotFoundException("event type not found"));
 
@@ -43,17 +52,19 @@ public class BookingService {
         Instant endTime = startTime.plus(eventType.getDuration(), ChronoUnit.MINUTES);
 
         Booking booking = new Booking(
-                eventType.getUser(), eventType, null, startTime, endTime, eventType.getDuration(),
+                eventType.getUser(), eventType, key, startTime, endTime, eventType.getDuration(),
                 request.inviteeName(), request.inviteeEmail(), request.inviteeTimezone(), null, null);
 
         Booking saved;
         try {
-// saveAndFlush, not save the uuid is generated in Java, so Hibernate would otherwise
-// defer the INSERT to commit time after this try/catch has exited and the 23P01
-// exclusion violation would escape as a generic DataIntegrityViolationException.
-          //  saved = bookingRepository.save(booking);
             saved = bookingRepository.saveAndFlush(booking);
         } catch (DataIntegrityViolationException ex) {
+            if (key != null) {
+                Optional<Booking> winner = bookingRepository.findByIdempotencyKey(key);
+                if (winner.isPresent()) {
+                    return toResponse(winner.get());
+                }
+            }
             if (isExclusionViolation(ex)) {
                 throw new SlotAlreadyBookedException("this slot was just booked");
             }
@@ -61,6 +72,10 @@ public class BookingService {
         }
 
         return toResponse(saved);
+    }
+
+    private String normalize(String idempotencyKey) {
+        return (idempotencyKey == null || idempotencyKey.isBlank()) ? null : idempotencyKey;
     }
 
     private boolean isExclusionViolation(DataIntegrityViolationException ex) {
