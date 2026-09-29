@@ -48,7 +48,11 @@ public class BookingService {
 
         Booking saved;
         try {
-            saved = bookingRepository.save(booking);
+// saveAndFlush, not save the uuid is generated in Java, so Hibernate would otherwise
+// defer the INSERT to commit time after this try/catch has exited and the 23P01
+// exclusion violation would escape as a generic DataIntegrityViolationException.
+          //  saved = bookingRepository.save(booking);
+            saved = bookingRepository.saveAndFlush(booking);
         } catch (DataIntegrityViolationException ex) {
             if (isExclusionViolation(ex)) {
                 throw new SlotAlreadyBookedException("this slot was just booked");
