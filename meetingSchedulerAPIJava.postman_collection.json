@@ -1,0 +1,305 @@
+{
+  "info": {
+    "_postman_id": "b7e2f2a0-3f1a-4b9e-9c1a-5f8e0d2a11e4",
+    "name": "meetingSchedulerAPIJava",
+    "description": "Java/Spring Boot port of the meeting-scheduler-api Postman/Bruno collection. Base URL, field names (camelCase), and verbs (PUT vs PATCH on schedule update) match the Java endpoints, not the Node ones.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      { "key": "token", "value": "{{token}}", "type": "string" }
+    ]
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8080", "type": "string" },
+    { "key": "token", "value": "", "type": "string" },
+    { "key": "scheduleId", "value": "", "type": "string" },
+    { "key": "eventTypeId", "value": "", "type": "string" }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Signup",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"name\":\"Himanshu\",\"email\":\"h@test.com\",\"password\":\"password123\"}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/signup",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "signup"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    pm.collectionVariables.set(\"token\", pm.response.json().token);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"email\":\"h@test.com\",\"password\":\"password123\"}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "login"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Schedules",
+      "item": [
+        {
+          "name": "createSchedule",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    pm.collectionVariables.set(\"scheduleId\", pm.response.json().id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"name\":\"Work Hours\",\"timezone\":\"Asia/Kolkata\",\"entries\":[{\"dayOfWeek\":1,\"startTime\":\"09:00\",\"endTime\":\"17:00\"},{\"dayOfWeek\":2,\"startTime\":\"09:00\",\"endTime\":\"17:00\"}]}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/schedules",
+              "host": ["{{baseUrl}}"],
+              "path": ["schedules"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "getSchedules",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/schedules",
+              "host": ["{{baseUrl}}"],
+              "path": ["schedules"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "getScheduleById",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/schedules/:scheduleId",
+              "host": ["{{baseUrl}}"],
+              "path": ["schedules", ":scheduleId"],
+              "variable": [{ "key": "scheduleId", "value": "{{scheduleId}}" }]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "updateSchedule",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "description": "Java's PUT is a full replace (whole body + entries), not Node's PATCH partial update — see F2B_ENTRIES_UPDATES_VALIDATION.md.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"name\":\"Work Hours (Updated)\",\"timezone\":\"Asia/Kolkata\",\"entries\":[{\"dayOfWeek\":1,\"startTime\":\"10:00\",\"endTime\":\"18:00\"}]}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/schedules/:scheduleId",
+              "host": ["{{baseUrl}}"],
+              "path": ["schedules", ":scheduleId"],
+              "variable": [{ "key": "scheduleId", "value": "{{scheduleId}}" }]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "deleteSchedule",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/schedules/:scheduleId",
+              "host": ["{{baseUrl}}"],
+              "path": ["schedules", ":scheduleId"],
+              "variable": [{ "key": "scheduleId", "value": "{{scheduleId}}" }]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "EventTypes",
+      "item": [
+        {
+          "name": "createEventType",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    pm.collectionVariables.set(\"eventTypeId\", pm.response.json().id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"scheduleId\":\"{{scheduleId}}\",\"name\":\"30 Min Meeting\",\"duration\":30,\"bufferBefore\":10,\"bufferAfter\":10,\"minNoticeMinutes\":0,\"maxDaysInAdvance\":30}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/event-types",
+              "host": ["{{baseUrl}}"],
+              "path": ["event-types"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "getEventTypes",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/event-types",
+              "host": ["{{baseUrl}}"],
+              "path": ["event-types"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "getEventTypesById",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/event-types/:eventTypeId",
+              "host": ["{{baseUrl}}"],
+              "path": ["event-types", ":eventTypeId"],
+              "variable": [{ "key": "eventTypeId", "value": "{{eventTypeId}}" }]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "updateEventType",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "description": "duration:-100 is a deliberate validation-failure test — @Positive on UpdateEventTypeRequest should reject it with 400.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"duration\":-100}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/event-types/:eventTypeId",
+              "host": ["{{baseUrl}}"],
+              "path": ["event-types", ":eventTypeId"],
+              "variable": [{ "key": "eventTypeId", "value": "{{eventTypeId}}" }]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Availability",
+      "item": [
+        {
+          "name": "getAvailability",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "description": "/availability is public (permitAll) — no token required, unlike Schedules/EventTypes.",
+            "url": {
+              "raw": "{{baseUrl}}/availability?eventTypeId={{eventTypeId}}&startDate=2026-07-23T00:00:00Z&endDate=2026-07-28T00:00:00Z&inviteeTimezone=America/New_York",
+              "host": ["{{baseUrl}}"],
+              "path": ["availability"],
+              "query": [
+                { "key": "eventTypeId", "value": "{{eventTypeId}}" },
+                { "key": "startDate", "value": "2026-07-23T00:00:00Z" },
+                { "key": "endDate", "value": "2026-07-28T00:00:00Z" },
+                { "key": "inviteeTimezone", "value": "America/New_York" }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Booking",
+      "item": [
+        {
+          "name": "createBooking",
+          "request": {
+            "method": "POST",
+            "description": "PLACEHOLDER — POST /bookings does not exist yet (F5/F6). Mirrors the expected shape: camelCase fields, Idempotency-Key header per the project plan. Update once F5 defines CreateBookingRequest.",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Idempotency-Key", "value": "" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"eventTypeId\":\"{{eventTypeId}}\",\"startTime\":\"2026-08-26T15:00:00+05:30\",\"inviteeName\":\"Idempotency Test\",\"inviteeEmail\":\"idem@example.com\",\"inviteeTimezone\":\"Asia/Kolkata\"}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/bookings",
+              "host": ["{{baseUrl}}"],
+              "path": ["bookings"]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
