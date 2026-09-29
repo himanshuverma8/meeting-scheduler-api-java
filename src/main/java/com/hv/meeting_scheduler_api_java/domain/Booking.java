@@ -161,5 +161,6 @@ public class Booking {
         this.inviteeTimezone = inviteeTimezone;
         this.joinUrl = joinUrl;
         this.hostUrl = hostUrl;
+        this.createdAt = Instant.now();
     }
 }
